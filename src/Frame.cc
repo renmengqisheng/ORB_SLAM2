@@ -227,6 +227,13 @@ Frame::Frame(const cv::Mat &imGray, const double &timeStamp, ORBextractor* extra
     AssignFeaturesToGrid();
 }
 
+//After Load Map need to Update frame id
+Frame::Frame( long unsigned int i )
+{   
+    mnId = i;
+    nNextId = i+1;
+}
+
 void Frame::AssignFeaturesToGrid()
 {
     int nReserve = 0.5f*N/(FRAME_GRID_COLS*FRAME_GRID_ROWS);
@@ -242,6 +249,11 @@ void Frame::AssignFeaturesToGrid()
         if(PosInGrid(kp,nGridPosX,nGridPosY))
             mGrid[nGridPosX][nGridPosY].push_back(i);
     }
+}
+
+void Frame::UpdatenNextId( unsigned int i )
+{
+    nNextId = i;
 }
 
 void Frame::ExtractORB(int flag, const cv::Mat &im)

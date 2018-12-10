@@ -28,6 +28,7 @@
 #include "ORBextractor.h"
 #include "Frame.h"
 #include "KeyFrameDatabase.h"
+#include "InitKeyFrame.h"  // For map loading
 
 #include <mutex>
 
@@ -39,11 +40,13 @@ class Map;
 class MapPoint;
 class Frame;
 class KeyFrameDatabase;
+class InitKeyFrame;  // For map loading
 
 class KeyFrame
 {
 public:
     KeyFrame(Frame &F, Map* pMap, KeyFrameDatabase* pKFDB);
+    KeyFrame(InitKeyFrame &initkf, Map* pMap, KeyFrameDatabase* pKFDB,vector< MapPoint*>& vpMapPoints);
 
     // Pose functions
     void SetPose(const cv::Mat &Tcw);
@@ -115,6 +118,9 @@ public:
     static bool lId(KeyFrame* pKF1, KeyFrame* pKF2){
         return pKF1->mnId<pKF2->mnId;
     }
+    
+    //After Load Map need to Update Keyframe id
+    void updateID(long unsigned int i);
 
 
     // The following variables are accesed from only 1 thread or never change (no mutex needed).

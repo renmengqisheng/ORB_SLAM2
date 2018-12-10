@@ -26,6 +26,15 @@
 #include <pangolin/pangolin.h>
 #include <iomanip>
 
+// Get current directory of the system
+#include <unistd.h>  
+#include <dirent.h>
+static bool has_suffix(const std::string &str, const std::string &suffix) // Used when loading binary DBoW file.
+{
+    std::size_t index = str.find(suffix, str.size() - suffix.size());
+    return (index != std::string::npos);
+}
+
 namespace ORB_SLAM2
 {
 
@@ -62,7 +71,22 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     cout << endl << "Loading ORB Vocabulary. This could take a while..." << endl;
 
     mpVocabulary = new ORBVocabulary();
-    bool bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
+    //bool bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
+    bool bVocLoad = false; // chose loading method based on file extension
+    
+    if (has_suffix(strVocFile, ".bin")){
+        cout << "loadFromBinaryFile......" << endl;
+        bVocLoad = mpVocabulary->loadFromBinaryFile(strVocFile);
+    }
+    else if(has_suffix(strVocFile, ".txt")){
+        cout << "loadFromTextFile......" << endl;
+        bVocLoad = mpVocabulary->loadFromTextFile(strVocFile);
+    }
+    else{
+        bVocLoad = false;
+    }
+
+    
     if(!bVocLoad)
     {
         cerr << "Wrong path to vocabulary. " << endl;
@@ -100,6 +124,32 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         mpViewer = new Viewer(this, mpFrameDrawer,mpMapDrawer,mpTracker,strSettingsFile);
         mptViewer = new thread(&Viewer::Run, mpViewer);
         mpTracker->SetViewer(mpViewer);
+    }
+    
+    // Choose to use pure localization mode
+    char IsPureLocalization;
+    cout << "Do you want to run pure localization?(y/n)" << endl;
+    cin >> IsPureLocalization;
+    if(IsPureLocalization == 'Y' || IsPureLocalization == 'y'){  
+        ActivateLocalizationMode();
+    }
+    //Load map
+    char IsLoadMap;
+    //get the current absoulte path  
+    std::string cwd = getcwd(NULL, 0);
+    cout << "The current dir is : " << cwd << endl; 
+    string strPathSystemSetting = cwd + "/" + strSettingsFile.c_str();
+    cout << "Your setting file path is : " << strPathSystemSetting << endl; 
+    
+    string strPathMap = cwd + "/MapPointandKeyFrame.bin";
+    cout << "Your map file path would be : " << strPathMap << endl; 
+    cout << "Do you want to load the map?(y/n)" << endl;  
+    cin >> IsLoadMap;
+    SystemSetting *mySystemSetting = new SystemSetting(mpVocabulary);  
+    mySystemSetting->LoadSystemSetting(strPathSystemSetting);
+    // mySystemSetting->LoadSystemSetting("/home/boom/MY_ORB_SLAM2/ORB_SLAM2/Examples/Stereo/KITTI04-12.yaml");
+    if(IsLoadMap == 'Y' || IsLoadMap == 'y'){  
+        mpMap->Load(strPathMap, mySystemSetting, mpKeyFrameDatabase);
     }
 
     //Set pointers between threads
@@ -470,6 +520,16 @@ void System::SaveTrajectoryKITTI(const string &filename)
     f.close();
     cout << endl << "trajectory saved!" << endl;
 }
+
+void System::SaveMap(const string &filename)  
+{  
+    mpMap->Save(filename);
+}
+
+// void System::LoadMap(const string &filename,SystemSetting* mySystemSetting)  
+// {
+//     mpMap->Load(filename, mySystemSetting); 
+// }
 
 int System::GetTrackingState()
 {

@@ -56,6 +56,32 @@ KeyFrame::KeyFrame(Frame &F, Map *pMap, KeyFrameDatabase *pKFDB):
     SetPose(F.mTcw);    
 }
 
+KeyFrame::KeyFrame(InitKeyFrame &initkf, Map *pMap, KeyFrameDatabase *pKFDB, vector<MapPoint*> &vpMapPoints):
+    mnFrameId(0), mTimeStamp(initkf.TimeStamp), mnGridCols(FRAME_GRID_COLS), mnGridRows(FRAME_GRID_ROWS),
+    mfGridElementWidthInv(initkf.fGridElementWidthInv), mfGridElementHeightInv(initkf.fGridElementHeightInv),
+    mnTrackReferenceForFrame(0), mnFuseTargetForKF(0), mnBALocalForKF(0), mnBAFixedForKF(0),
+    mnLoopQuery(0), mnLoopWords(0), mnRelocQuery(0), mnRelocWords(0), mnBAGlobalForKF(0),
+    fx(initkf.fx), fy(initkf.fy), cx(initkf.cx), cy(initkf.cy), invfx(initkf.invfx),
+    invfy(initkf.invfy), mbf(initkf.bf), mb(initkf.b), mThDepth(initkf.ThDepth), N(initkf.N),
+    mvKeys(initkf.vKps), mvKeysUn(initkf.vKpsUn), mvuRight(initkf.vRight), mvDepth(initkf.vDepth),
+    mDescriptors(initkf.Descriptors.clone()), mBowVec(initkf.BowVec), mFeatVec(initkf.FeatVec),
+    mnScaleLevels(initkf.nScaleLevels), mfScaleFactor(initkf.fScaleFactor), mfLogScaleFactor(initkf.fLogScaleFactor),
+    mvScaleFactors(initkf.vScaleFactors), mvLevelSigma2(initkf.vLevelSigma2),mvInvLevelSigma2(initkf.vInvLevelSigma2),
+    mnMinX(initkf.nMinX), mnMinY(initkf.nMinY), mnMaxX(initkf.nMaxX), mnMaxY(initkf.nMaxY), mK(initkf.K),
+    mvpMapPoints(vpMapPoints), mpKeyFrameDB(pKFDB), mpORBvocabulary(initkf.pVocabulary),
+    mbFirstConnection(true), mpParent(NULL), mbNotErase(false), mbToBeErased(false), mbBad(false),
+    mHalfBaseline(initkf.b/2), mpMap(pMap)
+{
+    mnId=nNextId++;
+    mGrid.resize(mnGridCols);
+    for(int i=0; i<mnGridCols;i++)
+    {
+        mGrid[i].resize(mnGridRows);
+        for(int j=0; j<mnGridRows; j++)
+            mGrid[i][j] = initkf.vGrid[i][j];
+    }
+}
+
 void KeyFrame::ComputeBoW()
 {
     if(mBowVec.empty() || mFeatVec.empty())
@@ -502,6 +528,12 @@ void KeyFrame::SetBadFlag()
                 {
                     for(set<KeyFrame*>::iterator spcit=sParentCandidates.begin(), spcend=sParentCandidates.end(); spcit!=spcend; spcit++)
                     {
+			if(vpConnected[i] == 0){
+                            cout << "vpConnected["<<i<<"] = " << vpConnected[i]<< endl;
+                            cout << "KeyFrame::SetBadFlag() : I'm just hacking it! Somewhere else must go wrong!"<< endl;
+                            continue;
+                        }
+                        
                         if(vpConnected[i]->mnId == (*spcit)->mnId)
                         {
                             int w = pKF->GetWeight(vpConnected[i]);
@@ -660,6 +692,14 @@ float KeyFrame::ComputeSceneMedianDepth(const int q)
     sort(vDepths.begin(),vDepths.end());
 
     return vDepths[(vDepths.size()-1)/q];
+}
+
+//After Load Map need to Update Keyframe id
+void KeyFrame::updateID(long unsigned int i)
+{
+    mnId=i+1;
+    //为了保险,这边直接设置其下一个id是最大id+2
+    nNextId = i+2;
 }
 
 } //namespace ORB_SLAM
