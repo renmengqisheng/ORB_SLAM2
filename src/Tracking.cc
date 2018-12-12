@@ -688,6 +688,7 @@ void Tracking::StereoInitializationWithMap()
 
 void Tracking::MonocularInitialization()
 {
+
     if(!mpInitializer)
     {
         if(first)
@@ -702,22 +703,6 @@ void Tracking::MonocularInitialization()
         }
         else
         {
-=======
-    if(!mpInitializer)
-    {
-        if(first)
-        {
-            cout << "是否开始录入第一帧？(y or n)" << endl;
-            char temp;
-            cin >> temp;
-            if(temp == 'y' || temp == 'Y')
-            {
-                first = false;
-            }
-        }
-        else
-        {
->>>>>>> f6429b13514c236fa4c79b48ecade2b48186ae11
             // Set Reference Frame
             if(mCurrentFrame.mvKeys.size()>100)
             {
