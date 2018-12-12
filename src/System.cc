@@ -135,18 +135,20 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
     }
     //Load map
     char IsLoadMap;
+    
     //get the current absoulte path  
     std::string cwd = getcwd(NULL, 0);
     cout << "The current dir is : " << cwd << endl; 
-    string strPathSystemSetting = cwd + "/" + strSettingsFile.c_str();
-    cout << "Your setting file path is : " << strPathSystemSetting << endl; 
+    //string strPathSystemSetting = cwd + "/" + strSettingsFile.c_str();
+    //cout << "Your setting file path is : " << strPathSystemSetting << endl; 
     
     string strPathMap = cwd + "/MapPointandKeyFrame.bin";
     cout << "Your map file path would be : " << strPathMap << endl; 
     cout << "Do you want to load the map?(y/n)" << endl;  
     cin >> IsLoadMap;
     SystemSetting *mySystemSetting = new SystemSetting(mpVocabulary);  
-    mySystemSetting->LoadSystemSetting(strPathSystemSetting);
+    //mySystemSetting->LoadSystemSetting(strPathSystemSetting);
+    mySystemSetting->LoadSystemSetting(strSettingsFile);
     // mySystemSetting->LoadSystemSetting("/home/boom/MY_ORB_SLAM2/ORB_SLAM2/Examples/Stereo/KITTI04-12.yaml");
     if(IsLoadMap == 'Y' || IsLoadMap == 'y'){  
         mpMap->Load(strPathMap, mySystemSetting, mpKeyFrameDatabase);

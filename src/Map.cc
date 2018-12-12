@@ -289,7 +289,7 @@ void Map::Load ( const string &filename, SystemSetting* mySystemSetting, KeyFram
         MapPoint *temp_MapPoint = new MapPoint(mnMaxMPid,this);  
     }
     cerr<<"Map.cc :: Max MapPoint ID is: " << mnMaxMPid << ", update MapPoint-mnId to this number" <<endl;
-    cerr<<"Map.cc :: MapPoint Load OVER!"<<endl;
+     cerr<<"Map.cc :: MapPoint Load OVER!"<<endl;
     
     // Get all MapPoints
     std::vector<MapPoint*> vmp = GetAllMapPoints();
@@ -309,17 +309,17 @@ void Map::Load ( const string &filename, SystemSetting* mySystemSetting, KeyFram
         mpKeyFrameDatabase->add(kf);
     }
     
-    //更新一下Frame那边的id,把这前N个从离线特征地图读入的KF记作前N个Frame,那么后续插入的Frame编号从N+1开始记录
+//     //更新一下Frame那边的id,把这前N个从离线特征地图读入的KF记作前N个Frame,那么后续插入的Frame编号从N+1开始记录
     if(mnMaxKFid>0){
 	//使用Frame的构造函数来解决id更新的问题
         Frame temp_frame = Frame( mnMaxKFid );
 	//更新kf的id
-	kf_by_order.front()->updateID(mnMaxKFid);
+//  	kf_by_order.front()->updateID(mnMaxKFid);
     }
-    //cerr<<"Map.cc :: Max KeyFrame ID is: " << mnMaxKFid << ", and I set mnId to this number" <<endl;
+//     cerr<<"Map.cc :: Max KeyFrame ID is: " << mnMaxKFid << ", and I set mnId to this number" <<endl;
     cerr<<"Map.cc :: Max KeyFrame ID is: " << mnMaxKFid << ", update KF(num+2) and Frame mnId to this number" <<endl;
     
-    cerr<<"Map.cc :: KeyFrame Load OVER!"<<endl;
+     cerr<<"Map.cc :: KeyFrame Load OVER!"<<endl;
     
     // Read Spanning Tree(open loop trajectory)
     map<unsigned long int, KeyFrame*> kf_by_id;
@@ -369,6 +369,24 @@ void Map::Load ( const string &filename, SystemSetting* mySystemSetting, KeyFram
         }
     }
     
+    //更新一下MapPoint那边的id,使得后续插入的MapPoint编号从N+1开始.
+    //重点!!!!!!!!!!!!!!!!!!!
+//     if (mnMaxMPid > 0) {
+// 	//使用MapPoint的构造函数来解决id更新的问题
+//         MapPoint *temp_MapPoint = new MapPoint(nMapPoints,this);  
+//     }
+//     cerr<<"Map.cc :: Max MapPoint ID is: " << mnMaxMPid << endl;
+//     cerr<<"Map.cc :: MapPoint quantity is: " << nMapPoints << ", update MapPoint-mnId to this number" <<endl;
+// 
+//     //更新一下Frame那边的id,把这前N个从离线特征地图读入的KF记作前N个Frame,那么后续插入的Frame编号从N+1开始记录
+//     if(mnMaxKFid>0){
+// 	//使用Frame的构造函数来解决id更新的问题
+//         Frame temp_frame = Frame( nKeyFrames );
+// 	//更新kf的id
+//  	//kf_by_order.front()->updateID(nKeyFrames);
+//     }
+//     //cerr<<"Map.cc :: Max KeyFrame ID is: " << nKeyFrames << ", update KF(num+1) to this number" <<endl;
+//     cerr<<"Map.cc :: Max Frame ID is: " << nKeyFrames << ", update Frame mnId to this number" <<endl;
     f.close();
     cerr<<"Map.cc :: Load is OVER!"<<endl;
     

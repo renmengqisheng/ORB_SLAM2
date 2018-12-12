@@ -325,7 +325,7 @@ void MapPoint::ComputeDistinctiveDescriptors()
         //float Dist_tmp[N];
         //std::copy(Distances[i].begin(), Distances[i].end(), Dist_tmp);
         //vector<int> vDists(Dist_tmp, Dist_tmp+N);
-        cout << "test Distances" << endl;
+        //cout << "test Distances" << endl;
         vector<int> vDists(Distances[i].begin(), Distances[i].end());
 
         sort(vDists.begin(),vDists.end());

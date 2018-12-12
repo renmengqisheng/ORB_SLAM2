@@ -313,6 +313,12 @@ void Tracking::Track()
             mState = NOT_INITIALIZED;
             return;
         }
+// 	if(mState!=OK)
+// 	{
+// 	    cout << "Tracking.cc :: Finish Map Loading. Starting Relocalization."<< endl;
+// 	    mState=LOST;
+// 	    return;
+// 	}
     }
     else
     {
@@ -815,6 +821,8 @@ void Tracking::MonocularInitialization()
 
 void Tracking::MonocularInitializationWithMap()
 {
+    cout << "Mono Init with map test: "<< mCurrentFrame.mnId << endl;
+    
     if(mCurrentFrame.N>500)
     {
         
@@ -840,11 +848,11 @@ void Tracking::MonocularInitializationWithMap()
                 bOK = TrackLocalMap();
         }
         if(bOK){
-            // cout << "Tracking.cc :: Track(), Now mState is OK." << endl;
+             cout << "Tracking.cc :: Track(), Now mState is OK." << endl;
             mState = OK;
         }
         else{
-            // cout << "Tracking.cc :: Track(), Now mState is LOST." << endl;
+             cout << "Tracking.cc :: Track(), Now mState is LOST." << endl;
             mState=LOST;
         }
         
@@ -1683,7 +1691,7 @@ bool Tracking::Relocalization()
             }
             else
             {
-                PnPsolver* pSolver = new PnPsolver(mCurrentFrame,vvpMapPointMatches[i]);
+		PnPsolver* pSolver = new PnPsolver(mCurrentFrame,vvpMapPointMatches[i]);
                 pSolver->SetRansacParameters(0.99,10,300,4,0.5,5.991);
                 vpPnPsolvers[i] = pSolver;
                 nCandidates++;

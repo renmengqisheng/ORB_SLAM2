@@ -697,9 +697,9 @@ float KeyFrame::ComputeSceneMedianDepth(const int q)
 //After Load Map need to Update Keyframe id
 void KeyFrame::updateID(long unsigned int i)
 {
-    mnId=i+1;
+    mnId=i;
     //为了保险,这边直接设置其下一个id是最大id+2
-    nNextId = i+2;
+    nNextId = i+1;
 }
 
 } //namespace ORB_SLAM

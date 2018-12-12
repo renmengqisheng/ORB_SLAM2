@@ -70,8 +70,13 @@ int main(int argc, char **argv)
 
     // Save camera trajectory
     SLAM.SaveKeyFrameTrajectoryTUM("KeyFrameTrajectory.txt");
+    
     // Save customized Map 
-    SLAM.SaveMap("MapPointandKeyFrame.bin");  
+    cout << "是否保存地图？(y or n)" << endl;
+    char isSave;
+    cin >> isSave;
+    if(isSave == 'Y' || isSave == 'y')
+      SLAM.SaveMap("MapPointandKeyFrame.bin");  
 
     ros::shutdown();
 
