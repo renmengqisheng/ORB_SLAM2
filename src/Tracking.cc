@@ -588,7 +588,7 @@ void Tracking::StereoInitialization()
 
 void Tracking::StereoInitializationWithMap()
 {
-<<<<<<< HEAD
+
     if(mCurrentFrame.N>500)
     {
         
@@ -988,7 +988,6 @@ void Tracking::CreateInitialMapMonocular()
     // Set median depth to 1
     //float medianDepth = pKFini->ComputeSceneMedianDepth(2);
     //float invMedianDepth = 1.0f/medianDepth;
-<<<<<<< HEAD
 
     //if(medianDepth<0 || pKFcur->TrackedMapPoints(1)<50)
     //{
@@ -997,16 +996,7 @@ void Tracking::CreateInitialMapMonocular()
     //   return;
     //}
 
-=======
 
-    //if(medianDepth<0 || pKFcur->TrackedMapPoints(1)<50)
-    //{
-    //    cout << "Wrong initialization, reseting..." << endl;
-    //    Reset();
-    //   return;
-    //}
-
->>>>>>> f6429b13514c236fa4c79b48ecade2b48186ae11
     // Scale initial baseline
     cv::Mat Tc2w = pKFcur->GetPose();
 
